@@ -1,7 +1,6 @@
 mod api;
 mod srv;
 
-use rocket::config::LogLevel;
 use rocket::{routes, Config};
 use std::collections::HashMap;
 use std::net::Ipv4Addr;
@@ -15,7 +14,6 @@ async fn main() -> Result<(), rocket::Error> {
     let config = Config {
         port: 3457,
         address: Ipv4Addr::new(0, 0, 0, 0).into(),
-        log_level: LogLevel::Debug,
         ..Config::default()
     };
 
