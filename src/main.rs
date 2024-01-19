@@ -1,3 +1,5 @@
+mod api;
+mod gd_parsing;
 mod srv;
 
 use rocket::config::LogLevel;
@@ -54,7 +56,7 @@ async fn main() -> Result<(), rocket::Error> {
 
     let _rocket = rocket::build()
         .manage(StreamMeow { rx })
-        .mount("/", routes![srv::version, srv::listen])
+        .mount("/", routes![srv::version, api::recent_levels_ws])
         .configure(config)
         .launch()
         .await?;
