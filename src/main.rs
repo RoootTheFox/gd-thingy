@@ -1,12 +1,19 @@
 mod api;
 mod srv;
 
+use dash_rs::response::parse_get_gj_levels_response;
+use lazy_static::lazy_static;
 use rocket::{routes, Config};
 use std::collections::HashMap;
 use std::net::Ipv4Addr;
 
 struct StreamMeow {
     rx: tokio::sync::broadcast::Receiver<String>,
+}
+
+// store last level in lazy_static, String because ListedLevel needs a lifetime
+lazy_static! {
+    static ref LAST_LEVEL: tokio::sync::Mutex<Option<String>> = tokio::sync::Mutex::new(None);
 }
 
 #[rocket::main]
@@ -47,7 +54,21 @@ async fn main() -> Result<(), rocket::Error> {
 
             let string = response.text().await.unwrap();
 
-            tx.send(string).unwrap();
+            match parse_get_gj_levels_response(&string) {
+                Ok(v) => {
+                    let level = v.first().unwrap();
+                    let data = serde_json::to_string(level).unwrap();
+
+                    tx.send(data.clone()).unwrap();
+                    let mut last_level = LAST_LEVEL.lock().await;
+                    last_level.replace(data);
+                }
+
+                Err(e) => {
+                    println!("Error: {}", e);
+                    continue;
+                }
+            }
         }
     });
 

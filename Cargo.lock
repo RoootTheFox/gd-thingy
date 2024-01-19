@@ -476,6 +476,7 @@ name = "gd-stuff"
 version = "0.1.0"
 dependencies = [
  "dash-rs",
+ "lazy_static",
  "reqwest",
  "rocket",
  "rocket_ws",

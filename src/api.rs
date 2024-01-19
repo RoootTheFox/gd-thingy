@@ -1,5 +1,4 @@
-use crate::StreamMeow;
-use dash_rs::response::parse_get_gj_levels_response;
+use crate::{StreamMeow, LAST_LEVEL};
 use rocket::futures::SinkExt;
 use rocket::{get, State};
 use rocket_ws::WebSocket;
@@ -10,22 +9,18 @@ pub(crate) fn recent_levels_ws(state: &State<StreamMeow>, ws: WebSocket) -> rock
 
     ws.channel(move |mut stream| {
         Box::pin(async move {
+            // send last level if available
+            if let Some(level) = LAST_LEVEL.lock().await.as_ref() {
+                if stream.send(level.clone().into()).await.is_err() {
+                    return Ok(());
+                }
+            }
+
             loop {
+                // we assume that data is a JSON containing the level data
                 let data = rx.recv().await.unwrap();
-                match parse_get_gj_levels_response(&data) {
-                    Ok(v) => {
-                        let level = v.first().unwrap();
-                        let data = serde_json::to_string(level).unwrap();
-
-                        if stream.send(data.into()).await.is_err() {
-                            return Ok(());
-                        }
-                    }
-
-                    Err(e) => {
-                        println!("Error: {}", e);
-                        continue;
-                    }
+                if stream.send(data.into()).await.is_err() {
+                    return Ok(());
                 }
             }
         })
