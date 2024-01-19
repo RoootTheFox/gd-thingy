@@ -479,6 +479,7 @@ dependencies = [
  "reqwest",
  "rocket",
  "rocket_ws",
+ "serde_json",
  "tokio",
 ]
 

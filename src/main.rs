@@ -1,5 +1,4 @@
 mod api;
-mod gd_parsing;
 mod srv;
 
 use rocket::config::LogLevel;

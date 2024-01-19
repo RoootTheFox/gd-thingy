@@ -12,11 +12,19 @@ pub(crate) fn recent_levels_ws(state: &State<StreamMeow>, ws: WebSocket) -> rock
         Box::pin(async move {
             loop {
                 let data = rx.recv().await.unwrap();
-                let vec = parse_get_gj_levels_response(&data).unwrap();
-                let level = vec.first().unwrap();
+                match parse_get_gj_levels_response(&data) {
+                    Ok(v) => {
+                        let level = v.first().unwrap();
+                        let data = serde_json::to_string(level).unwrap();
 
-                println!("{:?}", level);
-                let _ = stream.send(data.into()).await;
+                        let _ = stream.send(data.into()).await;
+                    }
+
+                    Err(e) => {
+                        println!("Error: {}", e);
+                        continue;
+                    }
+                }
             }
         })
     })
