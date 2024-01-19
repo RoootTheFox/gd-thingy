@@ -54,6 +54,7 @@ async fn main() -> Result<(), rocket::Error> {
     let _rocket = rocket::build()
         .manage(StreamMeow { rx })
         .mount("/", routes![srv::version, api::recent_levels_ws])
+        .mount("/", rocket::fs::FileServer::from("public"))
         .configure(config)
         .launch()
         .await?;

@@ -1,0 +1,25 @@
+body {
+    background-color: #1e1e2e;
+}
+
+.ta-center {
+    text-align: center;
+}
+
+.center-v {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.fw {
+    width: 100%;
+}
+
+.text {
+    color: #cdd6f4;
+}
+
+.big {
+    font-size: 80px;
+}
