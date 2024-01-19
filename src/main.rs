@@ -27,7 +27,7 @@ async fn main() -> Result<(), rocket::Error> {
     let (tx, rx) = tokio::sync::broadcast::channel(12);
 
     tokio::spawn(async move {
-        let mut interval = tokio::time::interval(tokio::time::Duration::from_secs(3));
+        let mut interval = tokio::time::interval(tokio::time::Duration::from_secs(1));
 
         let client = reqwest::Client::builder()
             .default_headers({
