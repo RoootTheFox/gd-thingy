@@ -17,7 +17,9 @@ pub(crate) fn recent_levels_ws(state: &State<StreamMeow>, ws: WebSocket) -> rock
                         let level = v.first().unwrap();
                         let data = serde_json::to_string(level).unwrap();
 
-                        let _ = stream.send(data.into()).await;
+                        if stream.send(data.into()).await.is_err() {
+                            return Ok(());
+                        }
                     }
 
                     Err(e) => {
